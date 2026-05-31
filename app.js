@@ -331,6 +331,7 @@ let collapsedAuthors = {}; // Track which authors are collapsed
 const bookListEl = document.getElementById('book-list');
 const filterBtns = document.querySelectorAll('.filter-btn');
 const sortSelect = document.getElementById('sort-select');
+const toggleAllBtn = document.getElementById('toggle-all-btn');
 const welcomeScreen = document.getElementById('welcome-screen');
 const bookView = document.getElementById('book-view');
 
@@ -356,6 +357,8 @@ const pageIndicator = document.getElementById('page-indicator');
 
 let currentPage = 0;
 let totalPages = 0;
+
+let allCollapsed = false;
 
 const notesEditor = document.getElementById('notes-editor');
 const saveStatus = document.getElementById('save-status');
@@ -454,6 +457,7 @@ function renderBookList() {
     }
 
     if (currentSort === 'author') {
+        toggleAllBtn.classList.remove('hidden');
         // Group by Author (Chronological order maintained by original array index)
         const authorGroups = {};
         unpinnedBooks.forEach(book => {
@@ -508,6 +512,8 @@ function renderBookList() {
             bookListEl.appendChild(content);
         }
     } else {
+        toggleAllBtn.classList.add('hidden');
+        
         // Flat Lists
         unpinnedBooks.sort((a, b) => {
             if (currentSort === 'alphabetical') {
@@ -758,6 +764,22 @@ function setupEventListeners() {
 
     sortSelect.addEventListener('change', (e) => {
         currentSort = e.target.value;
+        renderBookList();
+    });
+
+    toggleAllBtn.addEventListener('click', () => {
+        allCollapsed = !allCollapsed;
+        const authors = new Set(appData.books.map(b => b.author));
+        authors.forEach(author => {
+            collapsedAuthors[author] = allCollapsed;
+        });
+        
+        if (allCollapsed) {
+            toggleAllBtn.innerHTML = '<i data-lucide="chevrons-down"></i>';
+        } else {
+            toggleAllBtn.innerHTML = '<i data-lucide="chevrons-up-down"></i>';
+        }
+        lucide.createIcons();
         renderBookList();
     });
 
