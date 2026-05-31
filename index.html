@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audiobook Library & Notes</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>🎧 Library</h1>
+                <p>Audiobook & Notes Tracker</p>
+            </div>
+            
+            <div class="sidebar-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="unread">Up Next</button>
+                <button class="filter-btn" data-filter="listened">Listened</button>
+            </div>
+            
+            <div class="sidebar-sort-container">
+                <i data-lucide="arrow-down-up" class="sort-icon"></i>
+                <select id="sort-select" class="sort-select">
+                    <option value="author">Group by Author</option>
+                    <option value="chronological">Flat List (Chronological)</option>
+                    <option value="alphabetical">Flat List (A-Z)</option>
+                    <option value="listens">Most Listened</option>
+                </select>
+            </div>
+
+            <div class="book-list-container">
+                <ul id="book-list" class="book-list">
+                    <!-- Books injected via JS -->
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div id="welcome-screen" class="welcome-screen">
+                <i data-lucide="headphones" class="welcome-icon"></i>
+                <h2>Select an Audiobook</h2>
+                <p>Choose an audiobook from the sidebar to view your notes and listen count.</p>
+            </div>
+
+            <div id="book-view" class="book-view hidden">
+                <header class="book-header">
+                    <div id="book-meta-container" class="book-meta">
+                        <span id="book-author" class="author-tag">Author</span>
+                        <span id="book-status" class="status-tag">Status</span>
+                    </div>
+                    
+                    <div class="title-row">
+                        <h2 id="book-title" class="book-title">Book Title</h2>
+                        
+                        <!-- Listen Counter -->
+                        <div id="listen-counter-container" class="listen-counter">
+                            <span class="counter-label">Times Listened:</span>
+                            <div class="counter-controls">
+                                <button id="btn-decrease" class="counter-btn"><i data-lucide="minus"></i></button>
+                                <span id="listen-count" class="count-display">0</span>
+                                <button id="btn-increase" class="counter-btn"><i data-lucide="plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="tab-content">
+                    <div class="notes-header">
+                        <h3><i data-lucide="edit-3"></i> Your Notes</h3>
+                        <span id="save-status" class="save-status">Saved</span>
+                    </div>
+                    <div class="notes-editor-container">
+                        <textarea id="notes-editor" placeholder="Write your thoughts, quotes, and summaries here. These notes stay with the book no matter how many times you re-listen..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
