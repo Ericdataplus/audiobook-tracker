@@ -158,6 +158,21 @@ body {
     user-select: none;
 }
 
+.author-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.author-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-gold);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
 .author-group-header:first-child {
     border-top: none;
 }

@@ -168,6 +168,15 @@ const authorDates = {
     'J.P. Sartre': 'J.P. Sartre (1905 – 1980)'
 };
 
+const authorAvatars = {
+    'Homer (c. 8th Century BCE)': 'assets/avatars/homer.png',
+    'Plato (c. 427 – 347 BCE)': 'assets/avatars/plato.png',
+    'Aristotle (c. 384 – 322 BCE)': 'assets/avatars/aristotle.png',
+    'Seneca (c. 4 BCE – 65 CE)': 'assets/avatars/seneca.png',
+    'Marcus Aurelius (121 – 180 CE)': 'assets/avatars/marcus_aurelius.png',
+    'Descartes (1596 – 1650)': 'assets/avatars/descartes.png'
+};
+
 // Apply dates to initialBooks
 initialBooks.forEach(book => {
     if (authorDates[book.author]) {
@@ -365,8 +374,15 @@ function renderBookList() {
             
             const header = document.createElement('div');
             header.className = `author-group-header ${isCollapsed ? 'collapsed' : ''}`;
+            
+            const avatarSrc = authorAvatars[author];
+            const avatarHtml = avatarSrc ? `<img src="${avatarSrc}" class="author-avatar" alt="${author}">` : '';
+
             header.innerHTML = `
-                <span>${author}</span>
+                <div class="author-info">
+                    ${avatarHtml}
+                    <span>${author}</span>
+                </div>
                 <div class="author-header-actions">
                     <button class="author-notes-btn" title="Author Notes">
                         <i data-lucide="file-text"></i>
