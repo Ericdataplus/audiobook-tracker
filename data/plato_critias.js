@@ -1,4 +1,5 @@
-{
+window.bookDataCache = window.bookDataCache || {};
+window.bookDataCache["plato-critias"] = {
   "name": "Plato's Critias",
   "source": "Plato",
   "author": "Plato",
@@ -9,4 +10,4 @@
   "word_count": 877,
   "char_count": 6504,
   "description": "Incomplete dialogue about Atlantis, companion to Timaeus"
-}
+};

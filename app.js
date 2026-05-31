@@ -179,18 +179,18 @@ const authorAvatars = {
 };
 
 const bookDataFiles = {
-    'homer-iliad': 'data/homer_iliad.json',
-    'homer-odyssey': 'data/homer_odyssey.json',
-    'plato-apology': 'data/plato_apology.json',
-    'plato-phaedo': 'data/plato_phaedo.json',
-    'plato-republic': 'data/plato_republic.json',
-    'plato-timaeus': 'data/plato_timaeus.json',
-    'plato-critias': 'data/plato_critias.json',
-    'plato-laws': 'data/plato_laws.json',
-    'aristotle-nicomachean': 'data/aristotle_nicomachean_ethics.json',
-    'aristotle-poetics': 'data/aristotle_poetics.json',
-    'aristotle-politics': 'data/aristotle_politics.json',
-    'aristotle-rhetoric': 'data/aristotle_rhetoric.json'
+    'homer-iliad': 'data/homer_iliad.js',
+    'homer-odyssey': 'data/homer_odyssey.js',
+    'plato-apology': 'data/plato_apology.js',
+    'plato-phaedo': 'data/plato_phaedo.js',
+    'plato-republic': 'data/plato_republic.js',
+    'plato-timaeus': 'data/plato_timaeus.js',
+    'plato-critias': 'data/plato_critias.js',
+    'plato-laws': 'data/plato_laws.js',
+    'aristotle-nicomachean': 'data/aristotle_nicomachean_ethics.js',
+    'aristotle-poetics': 'data/aristotle_poetics.js',
+    'aristotle-politics': 'data/aristotle_politics.js',
+    'aristotle-rhetoric': 'data/aristotle_rhetoric.js'
 };
 
 // Apply dates to initialBooks
@@ -604,16 +604,28 @@ async function loadBookText() {
     const file = bookDataFiles[currentBookId];
     if (!file) return;
     
+    window.bookDataCache = window.bookDataCache || {};
+    if (window.bookDataCache[currentBookId]) {
+        readerText.textContent = window.bookDataCache[currentBookId].text;
+        return;
+    }
+    
     readerText.innerHTML = '<div style="text-align: center; opacity: 0.5; margin-top: 50px;"><i data-lucide="loader" class="spin"></i> Loading text...</div>';
     lucide.createIcons();
     
-    try {
-        const response = await fetch(file);
-        const data = await response.json();
-        readerText.textContent = data.text;
-    } catch (e) {
+    const script = document.createElement('script');
+    script.src = file;
+    script.onload = () => {
+        if (window.bookDataCache[currentBookId]) {
+            readerText.textContent = window.bookDataCache[currentBookId].text;
+        } else {
+            readerText.innerHTML = '<div style="color: #ff5252; text-align: center; margin-top: 50px;">Failed to load book text.</div>';
+        }
+    };
+    script.onerror = () => {
         readerText.innerHTML = '<div style="color: #ff5252; text-align: center; margin-top: 50px;">Failed to load book text.</div>';
-    }
+    };
+    document.body.appendChild(script);
 }
 
 // Event Listeners

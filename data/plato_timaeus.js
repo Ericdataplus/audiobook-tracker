@@ -1,4 +1,5 @@
-{
+window.bookDataCache = window.bookDataCache || {};
+window.bookDataCache["plato-timaeus"] = {
   "name": "Plato's Timaeus",
   "source": "Plato",
   "author": "Plato",
@@ -9,4 +10,4 @@
   "word_count": 73257,
   "char_count": 447750,
   "description": "Cosmological dialogue discussing the nature of the physical world and human beings"
-}
+};

@@ -1,4 +1,5 @@
-{
+window.bookDataCache = window.bookDataCache || {};
+window.bookDataCache["plato-laws"] = {
   "name": "Plato's Laws",
   "source": "Plato",
   "author": "Plato",
@@ -9,4 +10,4 @@
   "word_count": 238601,
   "char_count": 1322202,
   "description": "Legal code, political theory, divine law, second-best state - KEY TEXT for Gmirkin hypothesis on Pentateuchal law"
-}
+};

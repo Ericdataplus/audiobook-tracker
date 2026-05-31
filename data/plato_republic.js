@@ -1,4 +1,5 @@
-{
+window.bookDataCache = window.bookDataCache || {};
+window.bookDataCache["plato-republic"] = {
   "name": "Plato's Republic",
   "source": "Plato",
   "author": "Plato",
@@ -9,4 +10,4 @@
   "word_count": 216285,
   "char_count": 1194387,
   "description": "Political philosophy, justice, ideal state, theory of Forms"
-}
+};
