@@ -127,7 +127,14 @@ const initialBooks = [
     { id: 'nietzsche-genealogy', title: 'On the Genealogy of Morality', author: 'Nietzsche', listenedTimes: 0 },
     { id: 'freud-unconscious', title: 'The Unconscious', author: 'Sigmund Freud', listenedTimes: 0 },
     { id: 'einstein-relativity', title: 'Relativity', author: 'Albert Einstein', listenedTimes: 0 },
-    { id: 'sartre-being', title: 'Being and Nothingness', author: 'J.P. Sartre', listenedTimes: 0 }
+    { id: 'sartre-being', title: 'Being and Nothingness', author: 'J.P. Sartre', listenedTimes: 0 },
+    
+    // Modern Biblical Scholars
+    { id: 'macdonald-homeric', title: 'The Homeric Epics and the Gospel of Mark', author: 'Dennis MacDonald', listenedTimes: 0 },
+    { id: 'livesey-galatians', title: 'Galatians and the Rhetoric of Crisis', author: 'Nina E. Livesey', listenedTimes: 0 },
+    { id: 'adler-origins', title: 'The Origins of Judaism', author: 'Yonatan Adler', listenedTimes: 0 },
+    { id: 'barnea-selected', title: 'Selected Works', author: 'Gad Barnea', listenedTimes: 0 },
+    { id: 'gmirkin-plato', title: 'Plato and the Creation of the Hebrew Bible', author: 'Russell Gmirkin', listenedTimes: 0 }
 ];
 
 // Map of Author to Author + Dates for descriptive chronological viewing
@@ -165,7 +172,12 @@ const authorDates = {
     'Sigmund Freud': 'Sigmund Freud (1856 – 1939)',
     'Albert Einstein': 'Albert Einstein (1879 – 1955)',
     'Alan Turing': 'Alan Turing (1912 – 1954)',
-    'J.P. Sartre': 'J.P. Sartre (1905 – 1980)'
+    'J.P. Sartre': 'J.P. Sartre (1905 – 1980)',
+    'Dennis MacDonald': 'Dennis MacDonald (Modern Scholar)',
+    'Nina E. Livesey': 'Nina E. Livesey (Modern Scholar)',
+    'Yonatan Adler': 'Yonatan Adler (Modern Scholar)',
+    'Gad Barnea': 'Gad Barnea (Modern Scholar)',
+    'Russell Gmirkin': 'Russell Gmirkin (Modern Scholar)'
 };
 
 const authorAvatars = {
@@ -175,7 +187,12 @@ const authorAvatars = {
     'Aristotle (c. 384 – 322 BCE)': 'assets/avatars/aristotle.png',
     'Seneca (c. 4 BCE – 65 CE)': 'assets/avatars/seneca.png',
     'Marcus Aurelius (121 – 180 CE)': 'assets/avatars/marcus_aurelius.png',
-    'Descartes (1596 – 1650)': 'assets/avatars/descartes.png'
+    'Descartes (1596 – 1650)': 'assets/avatars/descartes.png',
+    'Dennis MacDonald (Modern Scholar)': 'assets/avatars/dennis_macdonald.png',
+    'Nina E. Livesey (Modern Scholar)': 'assets/avatars/nina_livesey.png',
+    'Yonatan Adler (Modern Scholar)': 'assets/avatars/yonatan_adler.png',
+    'Gad Barnea (Modern Scholar)': 'assets/avatars/gad_barnea.png',
+    'Russell Gmirkin (Modern Scholar)': 'assets/avatars/russell_gmirkin.png'
 };
 
 const bookDataFiles = {
