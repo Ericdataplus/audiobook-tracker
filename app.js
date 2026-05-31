@@ -178,6 +178,21 @@ const authorAvatars = {
     'Descartes (1596 – 1650)': 'assets/avatars/descartes.png'
 };
 
+const bookDataFiles = {
+    'homer-iliad': 'data/homer_iliad.json',
+    'homer-odyssey': 'data/homer_odyssey.json',
+    'plato-apology': 'data/plato_apology.json',
+    'plato-phaedo': 'data/plato_phaedo.json',
+    'plato-republic': 'data/plato_republic.json',
+    'plato-timaeus': 'data/plato_timaeus.json',
+    'plato-critias': 'data/plato_critias.json',
+    'plato-laws': 'data/plato_laws.json',
+    'aristotle-nicomachean': 'data/aristotle_nicomachean_ethics.json',
+    'aristotle-poetics': 'data/aristotle_poetics.json',
+    'aristotle-politics': 'data/aristotle_politics.json',
+    'aristotle-rhetoric': 'data/aristotle_rhetoric.json'
+};
+
 // Apply dates to initialBooks
 initialBooks.forEach(book => {
     if (authorDates[book.author]) {
@@ -310,6 +325,12 @@ const btnDecrease = document.getElementById('btn-decrease');
 const btnIncrease = document.getElementById('btn-increase');
 const bookMetaContainer = document.getElementById('book-meta-container');
 const listenCounterContainer = document.getElementById('listen-counter-container');
+
+const viewTabs = document.getElementById('view-tabs');
+const viewTabBtns = document.querySelectorAll('.view-tab-btn');
+const notesView = document.getElementById('notes-view');
+const readerView = document.getElementById('reader-view');
+const readerText = document.getElementById('reader-text');
 
 const notesEditor = document.getElementById('notes-editor');
 const saveStatus = document.getElementById('save-status');
@@ -517,6 +538,13 @@ function loadBook(bookId) {
     notesEditor.value = appData.notes[bookId] || '';
     notesEditor.placeholder = "Write your thoughts, quotes, and summaries here. These notes stay with the book no matter how many times you re-listen...";
     
+    if (bookDataFiles[bookId]) {
+        viewTabs.classList.remove('hidden');
+    } else {
+        viewTabs.classList.add('hidden');
+    }
+    switchTab('notes');
+
     lucide.createIcons();
 }
 
@@ -550,11 +578,52 @@ function loadAuthor(authorName) {
     notesEditor.value = appData.authorNotes[authorName] || '';
     notesEditor.placeholder = `Write high-level thoughts, themes, or historical context about ${authorName} here...`;
     
+    viewTabs.classList.add('hidden');
+    switchTab('notes');
+
     lucide.createIcons();
+}
+
+function switchTab(viewId) {
+    viewTabBtns.forEach(btn => btn.classList.remove('active'));
+    const targetBtn = document.querySelector(`.view-tab-btn[data-view="${viewId}"]`);
+    if (targetBtn) targetBtn.classList.add('active');
+    
+    if (viewId === 'notes') {
+        notesView.classList.remove('hidden');
+        readerView.classList.add('hidden');
+    } else {
+        notesView.classList.add('hidden');
+        readerView.classList.remove('hidden');
+        loadBookText();
+    }
+}
+
+async function loadBookText() {
+    if (!currentBookId) return;
+    const file = bookDataFiles[currentBookId];
+    if (!file) return;
+    
+    readerText.innerHTML = '<div style="text-align: center; opacity: 0.5; margin-top: 50px;"><i data-lucide="loader" class="spin"></i> Loading text...</div>';
+    lucide.createIcons();
+    
+    try {
+        const response = await fetch(file);
+        const data = await response.json();
+        readerText.textContent = data.text;
+    } catch (e) {
+        readerText.innerHTML = '<div style="color: #ff5252; text-align: center; margin-top: 50px;">Failed to load book text.</div>';
+    }
 }
 
 // Event Listeners
 function setupEventListeners() {
+    viewTabBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            switchTab(e.currentTarget.dataset.view);
+        });
+    });
+
     filterBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             filterBtns.forEach(b => b.classList.remove('active'));

@@ -74,13 +74,24 @@
                     <img id="author-large-artwork" class="hidden author-large-img" src="" alt="Author Artwork">
                 </div>
 
-                <div class="tab-content">
+                <div class="view-tabs hidden" id="view-tabs">
+                    <button class="view-tab-btn active" data-view="notes"><i data-lucide="edit-3"></i> My Notes</button>
+                    <button class="view-tab-btn" data-view="reader"><i data-lucide="book-open"></i> Read Book</button>
+                </div>
+
+                <div class="tab-content" id="notes-view">
                     <div class="notes-header">
                         <h3><i data-lucide="edit-3"></i> Your Notes</h3>
                         <span id="save-status" class="save-status">Saved</span>
                     </div>
                     <div class="notes-editor-container">
                         <textarea id="notes-editor" placeholder="Write your thoughts, quotes, and summaries here. These notes stay with the book no matter how many times you re-listen..."></textarea>
+                    </div>
+                </div>
+
+                <div class="reader-content hidden" id="reader-view">
+                    <div id="reader-text" class="reader-text">
+                        <!-- Book content injected here -->
                     </div>
                 </div>
             </div>
