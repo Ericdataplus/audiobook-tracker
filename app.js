@@ -224,7 +224,19 @@ appData.books.forEach(book => {
     if (initialBooks.findIndex(b => b.id === book.id) === -1) {
         // This is an orphan. Try to find its new ID by matching the title.
         let baseAuthor = book.author.split(' (')[0];
-        const matchingNewBook = initialBooks.find(b => b.title === book.title && b.author.startsWith(baseAuthor));
+        
+        let matchingNewBook = initialBooks.find(b => 
+            b.title.toLowerCase() === book.title.toLowerCase() && 
+            b.author.startsWith(baseAuthor)
+        );
+        
+        // Fallback: If author only has one book, match by author
+        if (!matchingNewBook) {
+            const authorBooks = initialBooks.filter(b => b.author.startsWith(baseAuthor));
+            if (authorBooks.length === 1) {
+                matchingNewBook = authorBooks[0];
+            }
+        }
         
         if (matchingNewBook) {
             // Transfer states to the existing new book if it was already merged
@@ -241,6 +253,9 @@ appData.books.forEach(book => {
             } else {
                 book.id = matchingNewBook.id;
             }
+        } else {
+            // Unresolvable orphan, clean it up so it doesn't break sorting
+            book.markForDeletion = true;
         }
     }
 });
