@@ -334,7 +334,7 @@ body {
 
 .reader-text {
     height: 100%;
-    column-width: calc(50% - 40px);
+    column-count: 2;
     column-gap: 80px;
     column-fill: auto;
     font-family: 'Georgia', 'Times New Roman', serif;
