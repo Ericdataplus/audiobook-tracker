@@ -187,6 +187,7 @@ const authorAvatars = {
     'Aristotle (c. 384 – 322 BCE)': 'assets/avatars/aristotle.png',
     'Seneca (c. 4 BCE – 65 CE)': 'assets/avatars/seneca.png',
     'Marcus Aurelius (121 – 180 CE)': 'assets/avatars/marcus_aurelius.png',
+    'St. Augustine (354 – 430 CE)': 'assets/avatars/st_augustine.png',
     'Descartes (1596 – 1650)': 'assets/avatars/descartes.png',
     'Dennis MacDonald (Modern Scholar)': 'assets/avatars/dennis_macdonald.png',
     'Nina E. Livesey (Modern Scholar)': 'assets/avatars/nina_livesey.png',
