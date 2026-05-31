@@ -331,6 +331,13 @@ const viewTabBtns = document.querySelectorAll('.view-tab-btn');
 const notesView = document.getElementById('notes-view');
 const readerView = document.getElementById('reader-view');
 const readerText = document.getElementById('reader-text');
+const readerViewport = document.getElementById('reader-viewport');
+const pagePrevBtn = document.getElementById('page-prev');
+const pageNextBtn = document.getElementById('page-next');
+const pageIndicator = document.getElementById('page-indicator');
+
+let currentPage = 0;
+let totalPages = 0;
 
 const notesEditor = document.getElementById('notes-editor');
 const saveStatus = document.getElementById('save-status');
@@ -637,6 +644,9 @@ async function loadBookText() {
             });
             
             readerText.innerHTML = formattedHtml;
+            currentPage = 0;
+            // Let the DOM render the columns before calculating width
+            setTimeout(updatePagination, 100);
         } else {
             readerText.innerHTML = '<div style="color: #ff5252; text-align: center; margin-top: 50px;">Failed to load book text.</div>';
         }
@@ -647,12 +657,69 @@ async function loadBookText() {
     document.body.appendChild(script);
 }
 
+function updatePagination() {
+    if (!currentBookId || readerView.classList.contains('hidden')) return;
+    
+    // Total scrollable width divided by viewport width gives total pages
+    const viewportWidth = readerViewport.clientWidth;
+    const scrollWidth = readerText.scrollWidth;
+    
+    totalPages = Math.ceil((scrollWidth - 10) / viewportWidth);
+    
+    if (currentPage >= totalPages) {
+        currentPage = Math.max(0, totalPages - 1);
+    }
+    
+    renderPagination();
+}
+
+function renderPagination() {
+    if (totalPages <= 1) {
+        pagePrevBtn.classList.add('hidden');
+        pageNextBtn.classList.add('hidden');
+        pageIndicator.textContent = '';
+        readerText.style.transform = `translateX(0px)`;
+        return;
+    }
+    
+    pagePrevBtn.classList.toggle('hidden', currentPage === 0);
+    pageNextBtn.classList.toggle('hidden', currentPage >= totalPages - 1);
+    
+    const viewportWidth = readerViewport.clientWidth;
+    // Shift the text exactly one viewport width per page
+    readerText.style.transform = `translateX(-${currentPage * viewportWidth}px)`;
+    
+    // Since each "page" slide shows two columns, the logical page count is per slide
+    pageIndicator.textContent = `Page ${currentPage + 1} of ${totalPages}`;
+}
+
+function turnPage(direction) {
+    if (direction === 'next' && currentPage < totalPages - 1) {
+        currentPage++;
+    } else if (direction === 'prev' && currentPage > 0) {
+        currentPage--;
+    }
+    renderPagination();
+}
+
 // Event Listeners
 function setupEventListeners() {
     viewTabBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             switchTab(e.currentTarget.dataset.view);
+            if (e.currentTarget.dataset.view === 'reader') {
+                setTimeout(updatePagination, 50);
+            }
         });
+    });
+
+    pagePrevBtn.addEventListener('click', () => turnPage('prev'));
+    pageNextBtn.addEventListener('click', () => turnPage('next'));
+
+    window.addEventListener('resize', () => {
+        if (!readerView.classList.contains('hidden')) {
+            updatePagination();
+        }
     });
 
     filterBtns.forEach(btn => {
