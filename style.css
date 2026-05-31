@@ -425,6 +425,22 @@ body {
     align-items: flex-end;
 }
 
+.artwork-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+    margin-top: 12px;
+}
+
+.author-large-img {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    border: 2px solid var(--accent-gold);
+    object-fit: cover;
+}
+
 .book-title {
     font-family: var(--font-heading);
     font-size: 3rem;

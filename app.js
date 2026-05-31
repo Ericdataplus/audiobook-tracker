@@ -258,6 +258,7 @@ const bookView = document.getElementById('book-view');
 
 const bookTitleEl = document.getElementById('book-title');
 const bookAuthorEl = document.getElementById('book-author');
+const authorLargeArtworkEl = document.getElementById('author-large-artwork');
 const bookStatusEl = document.getElementById('book-status');
 const listenCountEl = document.getElementById('listen-count');
 const btnDecrease = document.getElementById('btn-decrease');
@@ -460,6 +461,7 @@ function loadBook(bookId) {
 
     bookTitleEl.textContent = book.title;
     bookAuthorEl.textContent = book.author;
+    authorLargeArtworkEl.classList.add('hidden');
     
     const isListened = book.listenedTimes > 0;
     bookStatusEl.textContent = isListened ? 'Listened Through' : 'Up Next';
@@ -489,6 +491,14 @@ function loadAuthor(authorName) {
     // Hide Book Meta & Listen Counter
     bookMetaContainer.classList.add('hidden');
     listenCounterContainer.classList.add('hidden');
+
+    const avatarSrc = authorAvatars[authorName];
+    if (avatarSrc) {
+        authorLargeArtworkEl.src = avatarSrc;
+        authorLargeArtworkEl.classList.remove('hidden');
+    } else {
+        authorLargeArtworkEl.classList.add('hidden');
+    }
 
     bookTitleEl.textContent = `Notes on ${authorName}`;
     
