@@ -617,7 +617,26 @@ async function loadBookText() {
     script.src = file;
     script.onload = () => {
         if (window.bookDataCache[currentBookId]) {
-            readerText.textContent = window.bookDataCache[currentBookId].text;
+            const rawText = window.bookDataCache[currentBookId].text;
+            
+            // Format into proper book paragraphs
+            const paragraphs = rawText.split(/\n\s*\n/);
+            let formattedHtml = '';
+            
+            paragraphs.forEach(p => {
+                const text = p.trim();
+                if (!text) return;
+                
+                // Detect chapter headings (short, often uppercase)
+                if (text.length < 60 && (text.toUpperCase() === text || text.startsWith('BOOK') || text.startsWith('CHAPTER') || text.match(/^[IVXLCDM]+\.?$/))) {
+                     formattedHtml += `<p class="chapter-heading">${text}</p>`;
+                } else {
+                     // Collapse inner newlines so the paragraph flows naturally
+                     formattedHtml += `<p>${text.replace(/\n/g, ' ')}</p>`; 
+                }
+            });
+            
+            readerText.innerHTML = formattedHtml;
         } else {
             readerText.innerHTML = '<div style="color: #ff5252; text-align: center; margin-top: 50px;">Failed to load book text.</div>';
         }
