@@ -660,11 +660,15 @@ async function loadBookText() {
 function updatePagination() {
     if (!currentBookId || readerView.classList.contains('hidden')) return;
     
-    // Total scrollable width divided by viewport width gives total pages
     const viewportWidth = readerViewport.clientWidth;
     const scrollWidth = readerText.scrollWidth;
     
-    totalPages = Math.ceil((scrollWidth - 10) / viewportWidth);
+    // The total shift per page is the viewport width PLUS the column gap (80px)
+    const columnGap = 80;
+    const pageShift = viewportWidth + columnGap;
+    
+    // Add gap to scrollWidth because the last page doesn't have a trailing gap
+    totalPages = Math.ceil(scrollWidth / pageShift);
     
     if (currentPage >= totalPages) {
         currentPage = Math.max(0, totalPages - 1);
@@ -686,8 +690,11 @@ function renderPagination() {
     pageNextBtn.classList.toggle('hidden', currentPage >= totalPages - 1);
     
     const viewportWidth = readerViewport.clientWidth;
-    // Shift the text exactly one viewport width per page
-    readerText.style.transform = `translateX(-${currentPage * viewportWidth}px)`;
+    const columnGap = 80;
+    const pageShift = viewportWidth + columnGap;
+    
+    // Shift the text exactly one viewport width + gap per page
+    readerText.style.transform = `translateX(-${currentPage * pageShift}px)`;
     
     // Since each "page" slide shows two columns, the logical page count is per slide
     pageIndicator.textContent = `Page ${currentPage + 1} of ${totalPages}`;
