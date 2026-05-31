@@ -1,5 +1,6 @@
-// Book data extracted from READING_LIST.md
+// Book data extracted from READING_LIST.md and index.html timeline
 const initialBooks = [
+    // Ancient Greece
     { id: 'homer-iliad', title: 'The Iliad', author: 'Homer', listenedTimes: 0 },
     { id: 'homer-odyssey', title: 'The Odyssey', author: 'Homer', listenedTimes: 0 },
     { id: 'plato-apology', title: 'Apology', author: 'Plato', listenedTimes: 0 },
@@ -12,18 +13,50 @@ const initialBooks = [
     { id: 'aristotle-politics', title: 'Politics', author: 'Aristotle', listenedTimes: 0 },
     { id: 'aristotle-poetics', title: 'Poetics', author: 'Aristotle', listenedTimes: 0 },
     { id: 'epicurus-letter', title: 'Letter to Menoeceus', author: 'Epicurus', listenedTimes: 0 },
+    
+    // Rome & Late Antiquity
     { id: 'lucretius-nature', title: 'On the Nature of Things', author: 'Lucretius', listenedTimes: 0 },
+    { id: 'cicero-duties', title: 'On Duties', author: 'Cicero', listenedTimes: 0 },
     { id: 'seneca-letters', title: 'Letters from a Stoic', author: 'Seneca', listenedTimes: 0 },
+    { id: 'epictetus-enchiridion', title: 'The Enchiridion', author: 'Epictetus', listenedTimes: 0 },
     { id: 'aurelius-meditations', title: 'Meditations', author: 'Marcus Aurelius', listenedTimes: 0 },
+    { id: 'augustine-confessions', title: 'Confessions', author: 'St. Augustine', listenedTimes: 0 },
+    { id: 'boethius-consolation', title: 'Consolation of Philosophy', author: 'Boethius', listenedTimes: 0 },
+
+    // Islamic Golden Age
+    { id: 'alkindi-first-philosophy', title: 'On First Philosophy', author: 'Al-Kindi', listenedTimes: 0 },
+    { id: 'avicenna-canon', title: 'The Canon of Medicine', author: 'Avicenna', listenedTimes: 0 },
+    { id: 'alghazali-incoherence', title: 'The Incoherence of the Philosophers', author: 'Al-Ghazali', listenedTimes: 0 },
+    { id: 'averroes-treatise', title: 'The Decisive Treatise', author: 'Averroes', listenedTimes: 0 },
+
+    // Middle Ages & Renaissance
+    { id: 'aquinas-summa', title: 'Summa Theologica', author: 'Thomas Aquinas', listenedTimes: 0 },
     { id: 'machiavelli-prince', title: 'The Prince', author: 'Machiavelli', listenedTimes: 0 },
     { id: 'machiavelli-discourses', title: 'Discourses on Livy', author: 'Machiavelli', listenedTimes: 0 },
+
+    // Enlightenment & Modern Era
+    { id: 'hobbes-leviathan', title: 'Leviathan', author: 'Thomas Hobbes', listenedTimes: 0 },
     { id: 'descartes-discourse', title: 'Discourse on the Method', author: 'Descartes', listenedTimes: 0 },
     { id: 'descartes-meditations', title: 'Meditations on First Philosophy', author: 'Descartes', listenedTimes: 0 },
     { id: 'spinoza-theological', title: 'Theological-Political Treatise', author: 'Spinoza', listenedTimes: 0 },
     { id: 'spinoza-ethics', title: 'Ethics', author: 'Spinoza', listenedTimes: 0 },
+    { id: 'locke-treatises', title: 'Two Treatises of Government', author: 'John Locke', listenedTimes: 0 },
+    { id: 'hume-enquiry', title: 'Enquiry Concerning Human Understanding', author: 'David Hume', listenedTimes: 0 },
+    { id: 'rousseau-contract', title: 'The Social Contract', author: 'J.J. Rousseau', listenedTimes: 0 },
+    { id: 'smith-wealth', title: 'The Wealth of Nations', author: 'Adam Smith', listenedTimes: 0 },
+    { id: 'kant-critique', title: 'Critique of Pure Reason', author: 'Immanuel Kant', listenedTimes: 0 },
+    { id: 'hegel-phenomenology', title: 'Phenomenology of Spirit', author: 'G.W.F. Hegel', listenedTimes: 0 },
+    
+    // 19th & 20th Century
+    { id: 'darwin-origin', title: 'Origin of Species', author: 'Charles Darwin', listenedTimes: 0 },
+    { id: 'marx-kapital', title: 'Das Kapital', author: 'Karl Marx', listenedTimes: 0 },
     { id: 'nietzsche-zarathustra', title: 'Thus Spoke Zarathustra', author: 'Nietzsche', listenedTimes: 0 },
     { id: 'nietzsche-beyond', title: 'Beyond Good and Evil', author: 'Nietzsche', listenedTimes: 0 },
-    { id: 'nietzsche-genealogy', title: 'On the Genealogy of Morality', author: 'Nietzsche', listenedTimes: 0 }
+    { id: 'nietzsche-genealogy', title: 'On the Genealogy of Morality', author: 'Nietzsche', listenedTimes: 0 },
+    { id: 'freud-unconscious', title: 'The Unconscious', author: 'Sigmund Freud', listenedTimes: 0 },
+    { id: 'einstein-relativity', title: 'Relativity', author: 'Albert Einstein', listenedTimes: 0 },
+    { id: 'turing-computing', title: 'Computing Machinery and Intelligence', author: 'Alan Turing', listenedTimes: 0 },
+    { id: 'sartre-being', title: 'Being and Nothingness', author: 'J.P. Sartre', listenedTimes: 0 }
 ];
 
 // App State
@@ -33,11 +66,21 @@ let appData;
 if (rawData) {
     appData = JSON.parse(rawData);
     if (!appData.authorNotes) appData.authorNotes = {}; // Migration
+    
+    // Merge new books from initialBooks that might be missing in localStorage
+    initialBooks.forEach(initialBook => {
+        if (!appData.books.find(b => b.id === initialBook.id)) {
+            // Find the correct index to insert it chronologically based on initialBooks
+            const targetIndex = initialBooks.findIndex(b => b.id === initialBook.id);
+            // Insert it at the targetIndex (or end if array is shorter)
+            appData.books.splice(targetIndex, 0, initialBook);
+        }
+    });
 } else {
     // Migration from old V1 format or completely new
     let oldData = JSON.parse(localStorage.getItem('libraryData'));
     appData = {
-        books: initialBooks,
+        books: [...initialBooks], // Deep copy to prevent reference issues
         notes: oldData && oldData.notes ? oldData.notes : {},
         authorNotes: {}
     };
@@ -50,6 +93,13 @@ if (rawData) {
         });
     }
 }
+
+// Preserve chronological order based on initialBooks (in case of legacy state)
+appData.books.sort((a, b) => {
+    const indexA = initialBooks.findIndex(book => book.id === a.id);
+    const indexB = initialBooks.findIndex(book => book.id === b.id);
+    return indexA - indexB;
+});
 
 let currentFilter = 'all';
 let currentSort = 'author';
@@ -79,6 +129,7 @@ const saveStatus = document.getElementById('save-status');
 
 // Initialize
 function init() {
+    saveData(); // Save the newly merged books
     renderBookList();
     setupEventListeners();
 }
@@ -298,7 +349,6 @@ function loadAuthor(authorName) {
     
     lucide.createIcons();
 }
-
 
 // Event Listeners
 function setupEventListeners() {
