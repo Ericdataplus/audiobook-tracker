@@ -170,6 +170,7 @@ const authorDates = {
 
 const authorAvatars = {
     'Homer (c. 8th Century BCE)': 'assets/avatars/homer.png',
+    'Hesiod (c. 750 – 650 BCE)': 'assets/avatars/hesiod.png',
     'Plato (c. 427 – 347 BCE)': 'assets/avatars/plato.png',
     'Aristotle (c. 384 – 322 BCE)': 'assets/avatars/aristotle.png',
     'Seneca (c. 4 BCE – 65 CE)': 'assets/avatars/seneca.png',
