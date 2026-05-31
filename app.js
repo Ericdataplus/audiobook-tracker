@@ -219,6 +219,35 @@ if (rawData) {
     }
 }
 
+// Fix orphan books caused by ID changes in previous updates (e.g. aristotle-ethics -> aristotle-nicomachean)
+appData.books.forEach(book => {
+    if (initialBooks.findIndex(b => b.id === book.id) === -1) {
+        // This is an orphan. Try to find its new ID by matching the title.
+        let baseAuthor = book.author.split(' (')[0];
+        const matchingNewBook = initialBooks.find(b => b.title === book.title && b.author.startsWith(baseAuthor));
+        
+        if (matchingNewBook) {
+            // Transfer states to the existing new book if it was already merged
+            const alreadyMerged = appData.books.find(b => b.id === matchingNewBook.id && b !== book);
+            if (alreadyMerged) {
+                if (book.listenedTimes > alreadyMerged.listenedTimes) alreadyMerged.listenedTimes = book.listenedTimes;
+                if (book.isPinned) alreadyMerged.isPinned = true;
+                // Transfer notes if any
+                if (appData.notes[book.id]) {
+                    appData.notes[matchingNewBook.id] = appData.notes[book.id];
+                    delete appData.notes[book.id];
+                }
+                book.markForDeletion = true;
+            } else {
+                book.id = matchingNewBook.id;
+            }
+        }
+    }
+});
+
+// Remove old duplicates
+appData.books = appData.books.filter(b => !b.markForDeletion);
+
 // Migrate existing books to use author names with dates
 appData.books.forEach(book => {
     const initialBook = initialBooks.find(b => b.id === book.id);
