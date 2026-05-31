@@ -127,9 +127,53 @@ const initialBooks = [
     { id: 'nietzsche-genealogy', title: 'On the Genealogy of Morality', author: 'Nietzsche', listenedTimes: 0 },
     { id: 'freud-unconscious', title: 'The Unconscious', author: 'Sigmund Freud', listenedTimes: 0 },
     { id: 'einstein-relativity', title: 'Relativity', author: 'Albert Einstein', listenedTimes: 0 },
-    { id: 'turing-computing', title: 'Computing Machinery and Intelligence', author: 'Alan Turing', listenedTimes: 0 },
     { id: 'sartre-being', title: 'Being and Nothingness', author: 'J.P. Sartre', listenedTimes: 0 }
 ];
+
+// Map of Author to Author + Dates for descriptive chronological viewing
+const authorDates = {
+    'Homer': 'Homer (c. 8th Century BCE)',
+    'Hesiod': 'Hesiod (c. 750 – 650 BCE)',
+    'Plato': 'Plato (c. 427 – 347 BCE)',
+    'Aristotle': 'Aristotle (c. 384 – 322 BCE)',
+    'Epicurus': 'Epicurus (c. 341 – 270 BCE)',
+    'Lucretius': 'Lucretius (c. 99 – 55 BCE)',
+    'Cicero': 'Cicero (106 – 43 BCE)',
+    'Seneca': 'Seneca (c. 4 BCE – 65 CE)',
+    'Epictetus': 'Epictetus (c. 55 – 135 CE)',
+    'Marcus Aurelius': 'Marcus Aurelius (121 – 180 CE)',
+    'St. Augustine': 'St. Augustine (354 – 430 CE)',
+    'Boethius': 'Boethius (c. 477 – 524 CE)',
+    'Al-Kindi': 'Al-Kindi (801 – 873 CE)',
+    'Avicenna': 'Avicenna (980 – 1037 CE)',
+    'Al-Ghazali': 'Al-Ghazali (1058 – 1111 CE)',
+    'Averroes': 'Averroes (1126 – 1198 CE)',
+    'Thomas Aquinas': 'Thomas Aquinas (1225 – 1274 CE)',
+    'Machiavelli': 'Machiavelli (1469 – 1527 CE)',
+    'Thomas Hobbes': 'Thomas Hobbes (1588 – 1679)',
+    'Descartes': 'Descartes (1596 – 1650)',
+    'Spinoza': 'Spinoza (1632 – 1677)',
+    'John Locke': 'John Locke (1632 – 1704)',
+    'David Hume': 'David Hume (1711 – 1776)',
+    'J.J. Rousseau': 'J.J. Rousseau (1712 – 1778)',
+    'Adam Smith': 'Adam Smith (1723 – 1790)',
+    'Immanuel Kant': 'Immanuel Kant (1724 – 1804)',
+    'G.W.F. Hegel': 'G.W.F. Hegel (1770 – 1831)',
+    'Charles Darwin': 'Charles Darwin (1809 – 1882)',
+    'Karl Marx': 'Karl Marx (1818 – 1883)',
+    'Nietzsche': 'Nietzsche (1844 – 1900)',
+    'Sigmund Freud': 'Sigmund Freud (1856 – 1939)',
+    'Albert Einstein': 'Albert Einstein (1879 – 1955)',
+    'Alan Turing': 'Alan Turing (1912 – 1954)',
+    'J.P. Sartre': 'J.P. Sartre (1905 – 1980)'
+};
+
+// Apply dates to initialBooks
+initialBooks.forEach(book => {
+    if (authorDates[book.author]) {
+        book.author = authorDates[book.author];
+    }
+});
 
 // App State
 let rawData = localStorage.getItem('libraryDataV2');
@@ -152,7 +196,7 @@ if (rawData) {
     // Migration from old V1 format or completely new
     let oldData = JSON.parse(localStorage.getItem('libraryData'));
     appData = {
-        books: [...initialBooks], // Deep copy to prevent reference issues
+        books: JSON.parse(JSON.stringify(initialBooks)), // Deep copy to prevent reference issues
         notes: oldData && oldData.notes ? oldData.notes : {},
         authorNotes: {}
     };
@@ -165,6 +209,22 @@ if (rawData) {
         });
     }
 }
+
+// Migrate existing books to use author names with dates
+appData.books.forEach(book => {
+    const initialBook = initialBooks.find(b => b.id === book.id);
+    if (initialBook) {
+        book.author = initialBook.author;
+    }
+});
+
+// Migrate author notes keys to use author names with dates
+const newAuthorNotes = {};
+for (const [oldAuthorKey, notes] of Object.entries(appData.authorNotes)) {
+    const newAuthorName = authorDates[oldAuthorKey] || oldAuthorKey;
+    newAuthorNotes[newAuthorName] = notes;
+}
+appData.authorNotes = newAuthorNotes;
 
 // Preserve chronological order based on initialBooks (in case of legacy state)
 appData.books.sort((a, b) => {
