@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audiobook Library & Notes</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -56,6 +56,7 @@
                     <div id="book-meta-container" class="book-meta">
                         <span id="book-author" class="author-tag">Author</span>
                         <span id="book-status" class="status-tag">Status</span>
+                        <span id="book-wordcount" class="wordcount-tag hidden"></span>
                     </div>
                     
                     <div class="title-row">
@@ -96,21 +97,63 @@
                     <button class="page-nav page-prev hidden" id="page-prev"><i data-lucide="chevron-left"></i></button>
                     <button class="page-nav page-next hidden" id="page-next"><i data-lucide="chevron-right"></i></button>
                     
-                    <div class="book-container">
-                        <div class="reader-viewport" id="reader-viewport">
-                            <div id="reader-text" class="reader-text">
-                                <!-- Book content injected here -->
+                    <div class="reader-split" id="reader-split">
+                        <div class="reader-book-side">
+                            <div class="book-container">
+                                <div class="reader-viewport" id="reader-viewport">
+                                    <div id="reader-text" class="reader-text">
+                                        <!-- Book content injected here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Immersive mode illustration side panel -->
+                        <div class="reader-illustration-panel hidden" id="illustration-panel">
+                            <div class="illustration-panel-inner">
+                                <img id="panel-illustration-img" src="" alt="Scene illustration">
+                                <div class="illustration-panel-caption" id="panel-illustration-caption"></div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="page-indicator" id="page-indicator"></div>
+
+                    <!-- Audiobook control bar -->
+                    <div class="audiobook-controls hidden" id="audiobook-controls">
+                        <button class="ab-btn" id="ab-prev-chapter" title="Previous Chapter">⏮</button>
+                        <button class="ab-btn ab-play" id="ab-play-pause" title="Play/Pause">▶</button>
+                        <button class="ab-btn" id="ab-next-chapter" title="Next Chapter">⏭</button>
+                        <div class="ab-progress-wrap">
+                            <input type="range" class="ab-progress" id="ab-progress" min="0" max="1000" value="0">
+                            <span class="ab-time" id="ab-time">0:00 / 0:00</span>
+                        </div>
+                        <select class="ab-speed-select" id="ab-speed" title="Playback Speed">
+                            <option value="0.5">0.5×</option>
+                            <option value="0.75">0.75×</option>
+                            <option value="1" selected>1×</option>
+                            <option value="1.25">1.25×</option>
+                            <option value="1.5">1.5×</option>
+                            <option value="2">2×</option>
+                        </select>
+                        <select class="ab-chapter-select" id="ab-chapter-select"></select>
+                        <span class="ab-ambience-icon" id="ab-ambience-icon" title="Current Ambience">🌊</span>
+                        <input type="range" class="ab-volume" id="ab-volume" min="0" max="100" value="80" title="Volume">
+                        <button class="ab-btn ab-immersive-btn" id="ab-immersive-toggle" title="Toggle Immersive Mode">🖼️</button>
+                    </div>
+
+                    <!-- Scene illustration overlay (non-immersive mode) -->
+                    <div class="scene-illustration hidden" id="scene-illustration">
+                        <img id="scene-illustration-img" src="" alt="Scene illustration">
+                        <div class="scene-illustration-fade"></div>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <script src="app.js"></script>
+    <script src="data/book_stats.js?v=1"></script>
+    <script src="app.js?v=6"></script>
     <script>
         lucide.createIcons();
     </script>

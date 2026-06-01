@@ -180,6 +180,33 @@ const authorDates = {
     'Russell Gmirkin': 'Russell Gmirkin (Modern Scholar)'
 };
 
+const bookArtworks = {
+    'plato-republic': 'assets/books/plato_republic_1780296306777.png',
+    'plato-symposium': 'assets/books/plato_symposium_1780296319510.png',
+    'plato-apology': 'assets/books/plato_apology_1780296334032.png',
+    'plato-phaedrus': 'assets/books/plato_phaedrus_1780296344994.png',
+    'plato-timaeus': 'assets/books/plato_timaeus_1780296357663.png',
+    'plato-laws': 'assets/books/plato_laws_1780296818835.png',
+    'plato-gorgias': 'assets/books/plato_gorgias_1780296830774.png',
+    'plato-meno': 'assets/books/plato_meno_1780296842045.png',
+    'plato-protagoras': 'assets/books/plato_protagoras_1780296855249.png',
+    'plato-cratylus': 'assets/books/plato_cratylus_1780296867029.png',
+    'aristotle-nicomachean': 'assets/books/aristotle_nicomachean_1780296370393.png',
+    'aristotle-politics': 'assets/books/aristotle_politics_1780296383598.png',
+    'aristotle-metaphysics': 'assets/books/aristotle_metaphysics_1780296397119.png',
+    'aristotle-poetics': 'assets/books/aristotle_poetics_1780296410879.png',
+    'aristotle-soul': 'assets/books/aristotle_soul_1780296425280.png',
+    'aristotle-physics': 'assets/books/aristotle_physics_1780296878390.png',
+    'aristotle-rhetoric': 'assets/books/aristotle_rhetoric_1780296889443.png',
+    'aristotle-heavens': 'assets/books/aristotle_heavens_1780296899901.png',
+    'aristotle-generation': 'assets/books/aristotle_generation_1780296912162.png',
+    'aristotle-categories': 'assets/books/aristotle_categories_1780296923168.png',
+    'homer-iliad': 'assets/books/homer_iliad_1780297012876.png',
+    'homer-odyssey': 'assets/books/homer_odyssey_1780297027602.png',
+    'hesiod-theogony': 'assets/books/hesiod_theogony_1780297040511.png',
+    'hesiod-works': 'assets/books/hesiod_works_1780297051767.png'
+};
+
 const authorAvatars = {
     'Homer (c. 8th Century BCE)': 'assets/avatars/homer.png',
     'Hesiod (c. 750 – 650 BCE)': 'assets/avatars/hesiod.png',
@@ -326,6 +353,7 @@ let currentBookId = null;
 let currentAuthorId = null; // Track if we are viewing an author
 let saveTimeout = null;
 let collapsedAuthors = {}; // Track which authors are collapsed
+let audiobookPlayer = null; // Global audiobook player instance
 
 // DOM Elements
 const bookListEl = document.getElementById('book-list');
@@ -339,6 +367,7 @@ const bookTitleEl = document.getElementById('book-title');
 const bookAuthorEl = document.getElementById('book-author');
 const authorLargeArtworkEl = document.getElementById('author-large-artwork');
 const bookStatusEl = document.getElementById('book-status');
+const bookWordcountEl = document.getElementById('book-wordcount');
 const listenCountEl = document.getElementById('listen-count');
 const btnDecrease = document.getElementById('btn-decrease');
 const btnIncrease = document.getElementById('btn-increase');
@@ -368,6 +397,7 @@ function init() {
     saveData(); // Save the newly merged books
     renderBookList();
     setupEventListeners();
+    audiobookPlayer = new AudiobookPlayer();
 }
 
 // Save to LocalStorage
@@ -558,11 +588,26 @@ function loadBook(bookId) {
 
     bookTitleEl.textContent = book.title;
     bookAuthorEl.textContent = book.author;
-    authorLargeArtworkEl.classList.add('hidden');
+    
+    const artworkSrc = bookArtworks[bookId];
+    if (artworkSrc) {
+        authorLargeArtworkEl.src = artworkSrc;
+        authorLargeArtworkEl.classList.remove('hidden');
+    } else {
+        authorLargeArtworkEl.classList.add('hidden');
+    }
     
     const isListened = book.listenedTimes > 0;
     bookStatusEl.textContent = isListened ? 'Listened Through' : 'Up Next';
     bookStatusEl.className = `status-tag ${isListened ? 'listened' : 'active'}`;
+    
+    const wordCount = window.bookWordCounts ? window.bookWordCounts[bookId] : null;
+    if (wordCount) {
+        bookWordcountEl.innerHTML = `<i data-lucide="bar-chart-2"></i> ${wordCount}`;
+        bookWordcountEl.classList.remove('hidden');
+    } else {
+        bookWordcountEl.classList.add('hidden');
+    }
     
     listenCountEl.textContent = book.listenedTimes;
 
@@ -637,7 +682,7 @@ async function loadBookText() {
     
     window.bookDataCache = window.bookDataCache || {};
     if (window.bookDataCache[currentBookId]) {
-        readerText.textContent = window.bookDataCache[currentBookId].text;
+        renderBookTextFromCache();
         return;
     }
     
@@ -648,29 +693,7 @@ async function loadBookText() {
     script.src = file;
     script.onload = () => {
         if (window.bookDataCache[currentBookId]) {
-            const rawText = window.bookDataCache[currentBookId].text;
-            
-            // Format into proper book paragraphs
-            const paragraphs = rawText.split(/\n\s*\n/);
-            let formattedHtml = '';
-            
-            paragraphs.forEach(p => {
-                const text = p.trim();
-                if (!text) return;
-                
-                // Detect chapter headings (short, often uppercase)
-                if (text.length < 60 && (text.toUpperCase() === text || text.startsWith('BOOK') || text.startsWith('CHAPTER') || text.match(/^[IVXLCDM]+\.?$/))) {
-                     formattedHtml += `<p class="chapter-heading">${text}</p>`;
-                } else {
-                     // Collapse inner newlines so the paragraph flows naturally
-                     formattedHtml += `<p>${text.replace(/\n/g, ' ')}</p>`; 
-                }
-            });
-            
-            readerText.innerHTML = formattedHtml;
-            currentPage = 0;
-            // Let the DOM render the columns before calculating width
-            setTimeout(updatePagination, 100);
+            renderBookTextFromCache();
         } else {
             readerText.innerHTML = '<div style="color: #ff5252; text-align: center; margin-top: 50px;">Failed to load book text.</div>';
         }
@@ -681,76 +704,57 @@ async function loadBookText() {
     document.body.appendChild(script);
 }
 
-function updatePagination() {
-    if (!currentBookId || readerView.classList.contains('hidden')) return;
+function renderBookTextFromCache() {
+    const rawText = window.bookDataCache[currentBookId].text;
+    const artworks = window.inlineArtworks ? (window.inlineArtworks[currentBookId] || {}) : {};
     
-    const viewportWidth = readerViewport.clientWidth;
-    const scrollWidth = readerText.scrollWidth;
+    // Format into proper book paragraphs
+    const paragraphs = rawText.split(/\n\s*\n/);
+    let formattedHtml = '';
+    let paragraphIndex = 0;
     
-    // The total shift per page is the viewport width PLUS the column gap (80px)
-    const columnGap = 80;
-    const pageShift = viewportWidth + columnGap;
+    paragraphs.forEach(p => {
+        const text = p.trim();
+        if (!text) return;
+        
+        // Inject inline artwork if it exists for this paragraph
+        if (artworks[paragraphIndex]) {
+            formattedHtml += `<img src="${artworks[paragraphIndex]}" class="inline-scene" alt="Scene illustration" loading="lazy">`;
+        }
+        
+        // Detect chapter headings (short, often uppercase)
+        if (text.length < 60 && (text.toUpperCase() === text || text.startsWith('BOOK') || text.startsWith('CHAPTER') || text.match(/^[IVXLCDM]+\.?$/))) {
+             formattedHtml += `<p class="chapter-heading" data-paragraph-index="${paragraphIndex}">${text}</p>`;
+        } else {
+             // Collapse inner newlines so the paragraph flows naturally
+             formattedHtml += `<p data-paragraph-index="${paragraphIndex}">${text.replace(/\n/g, ' ')}</p>`; 
+        }
+        paragraphIndex++;
+    });
     
-    // Add gap to scrollWidth because the last page doesn't have a trailing gap
-    totalPages = Math.ceil(scrollWidth / pageShift);
+    readerText.innerHTML = formattedHtml;
+    readerText.style.transform = 'translateX(0px)';
     
-    if (currentPage >= totalPages) {
-        currentPage = Math.max(0, totalPages - 1);
-    }
-    
-    renderPagination();
+    setTimeout(() => {
+        // Initialize audiobook player for this book
+        if (audiobookPlayer) {
+            audiobookPlayer.init(currentBookId);
+        }
+    }, 100);
 }
 
-function renderPagination() {
-    if (totalPages <= 1) {
-        pagePrevBtn.classList.add('hidden');
-        pageNextBtn.classList.add('hidden');
-        pageIndicator.textContent = '';
-        readerText.style.transform = `translateX(0px)`;
-        return;
-    }
-    
-    pagePrevBtn.classList.toggle('hidden', currentPage === 0);
-    pageNextBtn.classList.toggle('hidden', currentPage >= totalPages - 1);
-    
-    const viewportWidth = readerViewport.clientWidth;
-    const columnGap = 80;
-    const pageShift = viewportWidth + columnGap;
-    
-    // Shift the text exactly one viewport width + gap per page
-    readerText.style.transform = `translateX(-${currentPage * pageShift}px)`;
-    
-    // Since each "page" slide shows two columns, the logical page count is per slide
-    pageIndicator.textContent = `Page ${currentPage + 1} of ${totalPages}`;
-}
-
-function turnPage(direction) {
-    if (direction === 'next' && currentPage < totalPages - 1) {
-        currentPage++;
-    } else if (direction === 'prev' && currentPage > 0) {
-        currentPage--;
-    }
-    renderPagination();
-}
+// Pagination removed in favor of continuous scroll
 
 // Event Listeners
 function setupEventListeners() {
     viewTabBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             switchTab(e.currentTarget.dataset.view);
-            if (e.currentTarget.dataset.view === 'reader') {
-                setTimeout(updatePagination, 50);
-            }
         });
     });
 
-    pagePrevBtn.addEventListener('click', () => turnPage('prev'));
-    pageNextBtn.addEventListener('click', () => turnPage('next'));
-
     window.addEventListener('resize', () => {
-        if (!readerView.classList.contains('hidden')) {
-            updatePagination();
-        }
+        // Handle window resize logic if needed
     });
 
     filterBtns.forEach(btn => {
@@ -819,6 +823,593 @@ function setupEventListeners() {
             saveData();
         }, 800);
     });
+}
+
+// ============================================
+// AUDIOBOOK PLAYER CLASS
+// ============================================
+
+class AudiobookPlayer {
+    constructor() {
+        this.audio = new Audio();
+        this.ambienceAudio = null;
+        this.metadata = null;
+        this.currentChapter = 1;
+        this.currentParagraphIndex = -1;
+        this.isPlaying = false;
+        this.totalChapters = 24;
+        this.manifest = null;
+        this.animFrameId = null;
+        this.illustrationTimeout = null;
+        this.currentBookId = null;
+        this.immersiveMode = false;
+        this.currentIllustrationSrc = null;
+        this.paragraphIndexMap = {}; // Maps metadata index -> DOM paragraph index
+
+        this.ambienceMap = {
+            ocean: '🌊',
+            palace: '🏛️',
+            cave: '🕳️',
+            storm: '⛈️',
+            feast_hall: '🍷',
+            battlefield: '⚔️',
+            underworld: '💀',
+            island: '🏝️',
+            forest: '🌲',
+            city: '🏙️',
+            temple: '🛕',
+            night: '🌙',
+            dawn: '🌅',
+            fire: '🔥'
+        };
+
+        this.controls = {
+            playPause: document.getElementById('ab-play-pause'),
+            progress: document.getElementById('ab-progress'),
+            time: document.getElementById('ab-time'),
+            chapterSelect: document.getElementById('ab-chapter-select'),
+            ambienceIcon: document.getElementById('ab-ambience-icon'),
+            volume: document.getElementById('ab-volume'),
+            speed: document.getElementById('ab-speed'),
+            prevChapter: document.getElementById('ab-prev-chapter'),
+            nextChapter: document.getElementById('ab-next-chapter'),
+            container: document.getElementById('audiobook-controls'),
+            illustration: document.getElementById('scene-illustration'),
+            illustrationImg: document.getElementById('scene-illustration-img'),
+            immersiveToggle: document.getElementById('ab-immersive-toggle'),
+            illustrationPanel: document.getElementById('illustration-panel'),
+            panelImg: document.getElementById('panel-illustration-img'),
+            panelCaption: document.getElementById('panel-illustration-caption'),
+            readerSplit: document.getElementById('reader-split'),
+        };
+
+        this.bindEvents();
+    }
+
+    async init(bookId) {
+        this.currentBookId = bookId;
+        try {
+            const resp = await fetch(`audiobook/manifest.json`);
+            if (!resp.ok) {
+                this.hideControls();
+                return;
+            }
+            this.manifest = await resp.json();
+        } catch (e) {
+            this.hideControls();
+            return;
+        }
+
+        // Check if this book has audiobook data
+        // Manifest uses chapters array format
+        const hasAudiobook = bookId === 'homer-odyssey' && this.manifest.chapters && this.manifest.chapters.length > 0;
+        if (!hasAudiobook) {
+            this.hideControls();
+            return;
+        }
+
+        this.totalChapters = this.manifest.total_chapters || this.manifest.chapters.length;
+        this.currentChapter = 1;
+
+        // Populate chapter select
+        this.controls.chapterSelect.innerHTML = '';
+        for (let i = 0; i < this.manifest.chapters.length; i++) {
+            const ch = this.manifest.chapters[i];
+            const opt = document.createElement('option');
+            opt.value = ch.book_num;
+            opt.textContent = ch.title ? `${ch.chapter} - ${ch.title}` : ch.chapter;
+            this.controls.chapterSelect.appendChild(opt);
+        }
+
+        // Show controls and mark reader as having audiobook
+        this.showControls();
+        readerText.classList.add('audiobook-active');
+        readerView.classList.add('has-audiobook');
+
+        // Load first chapter
+        await this.loadChapter(1);
+
+    }
+
+    async loadChapter(chapterNum) {
+        this.pause();
+        this.currentChapter = chapterNum;
+        this.currentParagraphIndex = -1;
+        this.clearHighlight();
+
+        const padded = String(chapterNum).padStart(2, '0');
+        const audioPath = `audiobook/chapters/book_${padded}.wav`;
+        const metaPath = `audiobook/chapters/book_${padded}_meta.json`;
+
+        try {
+            const metaResp = await fetch(metaPath);
+            if (metaResp.ok) {
+                this.metadata = await metaResp.json();
+            } else {
+                this.metadata = null;
+            }
+        } catch (e) {
+            this.metadata = null;
+        }
+
+        this.audio.src = audioPath;
+        this.audio.load();
+        this.audio.volume = this.controls.volume.value / 100;
+
+        // Update chapter select
+        this.controls.chapterSelect.value = chapterNum;
+
+        // Reset progress
+        this.controls.progress.value = 0;
+        this.controls.time.textContent = `0:00 / 0:00`;
+
+        // Set initial ambience from first paragraph
+        if (this.metadata && this.metadata.paragraphs && this.metadata.paragraphs.length > 0) {
+            const firstAmbience = this.metadata.paragraphs[0].ambience;
+            if (firstAmbience) {
+                this.setAmbience(firstAmbience);
+            }
+        }
+
+        // Build mapping from metadata paragraph indices to DOM paragraph indices
+        this.buildParagraphMap();
+    }
+
+    buildParagraphMap() {
+        this.paragraphIndexMap = {};
+        if (!this.metadata || !this.metadata.paragraphs) return;
+
+        const domParagraphs = readerText.querySelectorAll('p[data-paragraph-index]');
+        if (domParagraphs.length === 0) return;
+
+        // Build a normalized text lookup from DOM paragraphs
+        const domTexts = [];
+        domParagraphs.forEach(el => {
+            const idx = parseInt(el.dataset.paragraphIndex);
+            // Normalize: collapse whitespace, trim, lowercase, take first 60 chars
+            const normalized = el.textContent.replace(/\s+/g, ' ').trim().toLowerCase().substring(0, 60);
+            domTexts.push({ idx, normalized });
+        });
+
+        // For each metadata paragraph, find the matching DOM paragraph
+        this.metadata.paragraphs.forEach(metaPara => {
+            const metaText = (metaPara.text || '').replace(/\s+/g, ' ').trim().toLowerCase().substring(0, 60);
+            if (!metaText) return;
+
+            const match = domTexts.find(d => d.normalized.startsWith(metaText.substring(0, 40)) || metaText.startsWith(d.normalized.substring(0, 40)));
+            if (match) {
+                this.paragraphIndexMap[metaPara.index] = match.idx;
+            }
+        });
+
+        // If text matching found nothing, try offset-based fallback
+        if (Object.keys(this.paragraphIndexMap).length === 0) {
+            // Simple fallback: assume metadata indices map 1:1
+            this.metadata.paragraphs.forEach(metaPara => {
+                this.paragraphIndexMap[metaPara.index] = metaPara.index;
+            });
+        }
+    }
+
+    play() {
+        if (!this.audio.src) return;
+        this.audio.play().catch(() => {});
+        this.isPlaying = true;
+        this.controls.playPause.textContent = '⏸';
+        this.controls.playPause.classList.add('playing');
+        this.startAnimLoop();
+    }
+
+    pause() {
+        this.audio.pause();
+        this.isPlaying = false;
+        this.controls.playPause.textContent = '▶';
+        this.controls.playPause.classList.remove('playing');
+        this.stopAnimLoop();
+    }
+
+    toggle() {
+        if (this.isPlaying) {
+            this.pause();
+        } else {
+            this.play();
+        }
+    }
+
+    startAnimLoop() {
+        const loop = () => {
+            this.onTimeUpdate();
+            this.animFrameId = requestAnimationFrame(loop);
+        };
+        this.animFrameId = requestAnimationFrame(loop);
+    }
+
+    stopAnimLoop() {
+        if (this.animFrameId) {
+            cancelAnimationFrame(this.animFrameId);
+            this.animFrameId = null;
+        }
+    }
+
+    onTimeUpdate() {
+        const currentTime = this.audio.currentTime;
+        const duration = this.audio.duration || 0;
+
+        // Update progress bar
+        if (duration > 0) {
+            this.controls.progress.value = Math.floor((currentTime / duration) * 1000);
+        }
+
+        // Update time display
+        this.controls.time.textContent = `${this.formatTime(currentTime)} / ${this.formatTime(duration)}`;
+
+        // Find current paragraph from metadata
+        if (!this.metadata || !this.metadata.paragraphs) return;
+
+        const paragraphs = this.metadata.paragraphs;
+        let newIndex = -1;
+
+        for (let i = paragraphs.length - 1; i >= 0; i--) {
+            if (currentTime >= paragraphs[i].start_time) {
+                newIndex = paragraphs[i].index;
+                break;
+            }
+        }
+
+        if (newIndex !== this.currentParagraphIndex && newIndex >= 0) {
+            const prevIndex = this.currentParagraphIndex;
+            this.currentParagraphIndex = newIndex;
+
+            this.highlightParagraph(newIndex, prevIndex);
+
+            // Check for ambience changes
+            const para = paragraphs.find(p => p.index === newIndex);
+            if (para) {
+                if (para.ambience) {
+                    this.setAmbience(para.ambience);
+                }
+                // Check for illustration
+                if (para.illustration) {
+                    this.showIllustration(para.illustration);
+                }
+            }
+        }
+    }
+
+    highlightParagraph(index, prevIndex) {
+        // Use the map to translate metadata index -> DOM index
+        const domIndex = this.paragraphIndexMap[index];
+        const prevDomIndex = this.paragraphIndexMap[prevIndex];
+
+        // Remove previous highlight
+        if (prevDomIndex !== undefined && prevDomIndex >= 0) {
+            const prevEl = readerText.querySelector(`p[data-paragraph-index="${prevDomIndex}"]`);
+            if (prevEl) {
+                prevEl.classList.remove('paragraph-active');
+            }
+        }
+
+        // Add new highlight
+        if (domIndex === undefined) return;
+        const el = readerText.querySelector(`p[data-paragraph-index="${domIndex}"]`);
+        if (!el) return;
+
+        el.classList.add('paragraph-active');
+
+        // Auto page turn if needed
+        this.autoPageTurn(el);
+    }
+
+    clearHighlight() {
+        const active = readerText.querySelector('.paragraph-active');
+        if (active) active.classList.remove('paragraph-active');
+    }
+
+    autoPageTurn(paragraphElement) {
+        paragraphElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    setAmbience(name) {
+        const icon = this.ambienceMap[name];
+        if (icon) {
+            this.controls.ambienceIcon.textContent = icon;
+            this.controls.ambienceIcon.title = `Ambience: ${name}`;
+        }
+
+        // If ambience audio files exist, crossfade to them
+        if (this.currentAmbience === name) return;
+        this.currentAmbience = name;
+
+        const ambiencePath = `audiobook/ambience/${name}.mp3`;
+
+        // Fade out old ambience
+        if (this.ambienceAudio) {
+            const oldAmbience = this.ambienceAudio;
+            this.fadeAudio(oldAmbience, oldAmbience.volume, 0, 1500, () => {
+                oldAmbience.pause();
+                oldAmbience.src = '';
+            });
+        }
+
+        // Start new ambience
+        const newAmbience = new Audio(ambiencePath);
+        newAmbience.loop = true;
+        newAmbience.volume = 0;
+        this.ambienceAudio = newAmbience;
+        newAmbience.play().then(() => {
+            const targetVol = Math.min(0.15, (this.controls.volume.value / 100) * 0.2);
+            this.fadeAudio(newAmbience, 0, targetVol, 2000);
+        }).catch(() => {
+            // Ambience file not found — that's fine, just skip
+        });
+    }
+
+    fadeAudio(audioEl, from, to, duration, onDone) {
+        const startTime = performance.now();
+        const step = (now) => {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            audioEl.volume = from + (to - from) * progress;
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else if (onDone) {
+                onDone();
+            }
+        };
+        requestAnimationFrame(step);
+    }
+
+    showIllustration(imagePath) {
+        const fullPath = imagePath.startsWith('audiobook/') ? imagePath : `audiobook/${imagePath}`;
+
+        // Avoid reloading the same image
+        if (this.currentIllustrationSrc === fullPath) return;
+        this.currentIllustrationSrc = fullPath;
+
+        if (this.immersiveMode) {
+            // Side panel mode — show alongside text
+            if (!this.controls.panelImg) return;
+            this.controls.panelImg.classList.remove('loaded');
+            this.controls.panelImg.src = fullPath;
+            this.controls.panelImg.onload = () => {
+                this.controls.panelImg.classList.add('loaded');
+            };
+        } else {
+            // Overlay mode — show on top of text
+            if (!this.controls.illustration || !this.controls.illustrationImg) return;
+            this.controls.illustrationImg.src = fullPath;
+            this.controls.illustration.classList.remove('hidden');
+
+            requestAnimationFrame(() => {
+                this.controls.illustration.classList.add('visible');
+            });
+
+            clearTimeout(this.illustrationTimeout);
+            this.illustrationTimeout = setTimeout(() => {
+                this.hideIllustration();
+            }, 8000);
+        }
+    }
+
+    hideIllustration() {
+        if (!this.controls.illustration) return;
+        this.controls.illustration.classList.remove('visible');
+        setTimeout(() => {
+            this.controls.illustration.classList.add('hidden');
+        }, 800);
+    }
+
+    toggleImmersiveMode() {
+        this.immersiveMode = !this.immersiveMode;
+
+        // Toggle button state
+        if (this.controls.immersiveToggle) {
+            this.controls.immersiveToggle.classList.toggle('active', this.immersiveMode);
+        }
+
+        // Toggle full screen reader by hiding sidebar
+        const appContainer = document.querySelector('.app-container');
+        if (appContainer) {
+            appContainer.classList.toggle('immersive-mode', this.immersiveMode);
+        }
+    }
+
+    seekToProgress(value) {
+        const duration = this.audio.duration || 0;
+        if (duration > 0) {
+            this.audio.currentTime = (value / 1000) * duration;
+        }
+    }
+
+    seekToParagraph(index) {
+        if (!this.metadata || !this.metadata.paragraphs) return;
+        const para = this.metadata.paragraphs.find(p => p.index === index);
+        if (para) {
+            this.audio.currentTime = para.start_time;
+            if (!this.isPlaying) {
+                this.play();
+            }
+        }
+    }
+
+    formatTime(seconds) {
+        if (isNaN(seconds) || !isFinite(seconds)) return '0:00';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    showControls() {
+        if (this.controls.container) {
+            this.controls.container.classList.remove('hidden');
+        }
+    }
+
+    hideControls() {
+        if (this.controls.container) {
+            this.controls.container.classList.add('hidden');
+        }
+        readerText.classList.remove('audiobook-active');
+    }
+
+    bindEvents() {
+        // Play/Pause
+        if (this.controls.playPause) {
+            this.controls.playPause.addEventListener('click', () => this.toggle());
+        }
+
+        // Progress bar seek
+        if (this.controls.progress) {
+            this.controls.progress.addEventListener('input', (e) => {
+                this.seekToProgress(parseInt(e.target.value));
+            });
+        }
+
+        // Volume
+        if (this.controls.volume) {
+            this.controls.volume.addEventListener('input', (e) => {
+                this.audio.volume = e.target.value / 100;
+                if (this.ambienceAudio) {
+                    this.ambienceAudio.volume = Math.min(0.15, (e.target.value / 100) * 0.2);
+                }
+            });
+        }
+
+        // Speed control
+        if (this.controls.speed) {
+            this.controls.speed.addEventListener('change', (e) => {
+                this.audio.playbackRate = parseFloat(e.target.value);
+            });
+        }
+
+        // Immersive mode toggle
+        if (this.controls.immersiveToggle) {
+            this.controls.immersiveToggle.addEventListener('click', () => {
+                this.toggleImmersiveMode();
+            });
+        }
+
+        // Chapter select
+        if (this.controls.chapterSelect) {
+            this.controls.chapterSelect.addEventListener('change', (e) => {
+                this.loadChapter(parseInt(e.target.value));
+            });
+        }
+
+        // Previous / Next chapter
+        if (this.controls.prevChapter) {
+            this.controls.prevChapter.addEventListener('click', () => {
+                if (this.currentChapter > 1) {
+                    this.loadChapter(this.currentChapter - 1);
+                }
+            });
+        }
+        if (this.controls.nextChapter) {
+            this.controls.nextChapter.addEventListener('click', () => {
+                if (this.currentChapter < this.totalChapters) {
+                    this.loadChapter(this.currentChapter + 1);
+                }
+            });
+        }
+
+        // Audio ended — auto-advance chapter
+        this.audio.addEventListener('ended', () => {
+            if (this.currentChapter < this.totalChapters) {
+                this.loadChapter(this.currentChapter + 1).then(() => this.play());
+            } else {
+                this.pause();
+            }
+        });
+
+        // Click-on-paragraph to seek
+        readerText.addEventListener('click', (e) => {
+            const p = e.target.closest('p[data-paragraph-index]');
+            if (!p || !readerText.classList.contains('audiobook-active')) return;
+            const domIdx = parseInt(p.dataset.paragraphIndex);
+            if (isNaN(domIdx)) return;
+
+            // Reverse-map: find metadata index from DOM index
+            let metaIdx = null;
+            for (const [metaKey, domVal] of Object.entries(this.paragraphIndexMap)) {
+                if (domVal === domIdx) {
+                    metaIdx = parseInt(metaKey);
+                    break;
+                }
+            }
+            if (metaIdx !== null) {
+                this.seekToParagraph(metaIdx);
+            }
+        });
+
+        // Click illustration to dismiss
+        if (this.controls.illustration) {
+            this.controls.illustration.addEventListener('click', () => {
+                this.hideIllustration();
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Only handle when audiobook controls are visible
+            if (!this.controls.container || this.controls.container.classList.contains('hidden')) return;
+            // Don't capture when typing in textarea
+            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+
+            switch (e.code) {
+                case 'Space':
+                    e.preventDefault();
+                    this.toggle();
+                    break;
+                case 'ArrowLeft':
+                    if (e.shiftKey) {
+                        this.audio.currentTime = Math.max(0, this.audio.currentTime - 30);
+                    } else {
+                        this.audio.currentTime = Math.max(0, this.audio.currentTime - 10);
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (e.shiftKey) {
+                        this.audio.currentTime = Math.min(this.audio.duration, this.audio.currentTime + 30);
+                    } else {
+                        this.audio.currentTime = Math.min(this.audio.duration, this.audio.currentTime + 10);
+                    }
+                    break;
+            }
+        });
+    }
+
+    destroy() {
+        this.pause();
+        this.stopAnimLoop();
+        this.audio.src = '';
+        if (this.ambienceAudio) {
+            this.ambienceAudio.pause();
+            this.ambienceAudio.src = '';
+        }
+        clearTimeout(this.illustrationTimeout);
+        this.clearHighlight();
+        this.hideControls();
+    }
 }
 
 // Run

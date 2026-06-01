@@ -328,58 +328,55 @@ body {
     width: 100%;
     height: 100%;
     overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-y: auto;
     position: relative;
+    scroll-behavior: smooth;
+    padding-right: 20px; /* Space for scrollbar */
+}
+
+/* Custom scrollbar for reader */
+.reader-viewport::-webkit-scrollbar {
+    width: 8px;
+}
+.reader-viewport::-webkit-scrollbar-track {
+    background: transparent;
+}
+.reader-viewport::-webkit-scrollbar-thumb {
+    background: rgba(166, 146, 115, 0.3);
+    border-radius: 4px;
 }
 
 .reader-text {
-    height: 100%;
-    column-count: 2;
-    column-gap: 80px;
-    column-fill: auto;
+    height: auto;
+    max-width: 750px;
+    margin: 0 auto;
     font-family: 'Georgia', 'Times New Roman', serif;
     font-size: 1.15rem;
     line-height: 1.7;
     color: #2b2b2b;
     text-align: justify;
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    padding-bottom: 200px;
+}
+
+.inline-scene {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 2.5em 0;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    display: block;
+    border: 1px solid rgba(166, 146, 115, 0.3);
 }
 
 .page-nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--bg-panel);
-    border: 1px solid var(--border-color);
-    color: var(--accent-gold);
-    cursor: pointer;
-    border-radius: 50%;
-    width: 44px; 
-    height: 44px;
-    display: flex; 
-    justify-content: center; 
-    align-items: center;
-    z-index: 10;
-    transition: all 0.2s;
-}
-
-.page-nav:hover {
-    background: var(--accent-gold);
-    color: var(--bg-panel);
+    display: none !important;
 }
 
 .page-prev { left: 10px; }
 .page-next { right: 10px; }
 
 .page-indicator {
-    position: absolute;
-    bottom: 10px;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    font-family: var(--font-body);
+    display: none !important;
 }
 
 .reader-text p {
@@ -570,6 +567,23 @@ body {
     background: rgba(16, 185, 129, 0.1);
 }
 
+.wordcount-tag {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.wordcount-tag i {
+    width: 12px;
+    height: 12px;
+}
+
 .title-row {
     display: flex;
     justify-content: space-between;
@@ -733,3 +747,405 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-muted);
 }
+
+/* ============================================
+   AUDIOBOOK PLAYER — Premium Glassmorphism UI
+   ============================================ */
+
+/* Control Bar */
+.audiobook-controls {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 48px);
+    max-width: 960px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    background: rgba(10, 10, 14, 0.82);
+    backdrop-filter: blur(24px) saturate(1.6);
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.55),
+        0 2px 8px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    z-index: 20;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.audiobook-controls.hidden {
+    display: none !important;
+}
+
+/* Buttons */
+.ab-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+}
+
+.ab-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text-primary);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.2);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.ab-btn.ab-play {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(212, 175, 55, 0.1));
+    border-color: rgba(212, 175, 55, 0.35);
+    color: #f0d060;
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.15);
+}
+
+.ab-btn.ab-play:hover {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), rgba(212, 175, 55, 0.2));
+    box-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
+    transform: scale(1.08);
+}
+
+.ab-btn.ab-play.playing {
+    animation: playGlow 2s ease-in-out infinite;
+}
+
+@keyframes playGlow {
+    0%, 100% { box-shadow: 0 0 16px rgba(212, 175, 55, 0.15); }
+    50% { box-shadow: 0 0 28px rgba(212, 175, 55, 0.35); }
+}
+
+/* Progress Bar */
+.ab-progress-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 120px;
+}
+
+.ab-progress {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    outline: none;
+    cursor: pointer;
+    transition: height 0.15s ease;
+}
+
+.ab-progress:hover {
+    height: 7px;
+}
+
+.ab-progress::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f0d060, #d4af37);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ab-progress::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.7);
+}
+
+.ab-progress::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f0d060, #d4af37);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.ab-progress::-webkit-slider-runnable-track {
+    border-radius: 3px;
+}
+
+.ab-progress::-moz-range-track {
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Time Display */
+.ab-time {
+    font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-align: right;
+    user-select: none;
+}
+
+/* Chapter Select */
+.ab-chapter-select {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    outline: none;
+    max-width: 160px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.ab-chapter-select:hover {
+    border-color: rgba(212, 175, 55, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.ab-chapter-select option {
+    background: var(--bg-panel);
+    color: var(--text-primary);
+}
+
+/* Volume Slider */
+.ab-volume {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 72px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.ab-volume::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    cursor: pointer;
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.15s ease;
+}
+
+.ab-volume::-webkit-slider-thumb:hover {
+    background: var(--text-primary);
+    transform: scale(1.2);
+}
+
+.ab-volume::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    cursor: pointer;
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+}
+
+.ab-volume::-moz-range-track {
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Ambience Icon */
+.ab-ambience-icon {
+    font-size: 1.2rem;
+    cursor: default;
+    user-select: none;
+    flex-shrink: 0;
+    animation: ambiencePulse 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 4px rgba(100, 180, 255, 0.3));
+}
+
+@keyframes ambiencePulse {
+    0%, 100% { transform: scale(1); opacity: 0.85; }
+    50% { transform: scale(1.12); opacity: 1; }
+}
+
+/* ============================================
+   PARAGRAPH HIGHLIGHTING — Golden Glow Sync
+   ============================================ */
+
+.reader-text p {
+    transition: background 0.4s ease, border-left 0.4s ease, padding-left 0.4s ease;
+    border-left: 3px solid transparent;
+    padding-left: 0;
+    border-radius: 2px;
+}
+
+.reader-text p.paragraph-active {
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 200, 50, 0.12),
+        rgba(255, 200, 50, 0.18),
+        rgba(255, 200, 50, 0.12),
+        transparent
+    );
+    border-left: 3px solid rgba(255, 200, 50, 0.6);
+    padding-left: 8px;
+    border-radius: 2px;
+}
+
+/* Clickable paragraph hint on hover when audiobook is active */
+.reader-text.audiobook-active p {
+    cursor: pointer;
+}
+
+.reader-text.audiobook-active p:hover {
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 200, 50, 0.06),
+        rgba(255, 200, 50, 0.08),
+        rgba(255, 200, 50, 0.06),
+        transparent
+    );
+}
+
+/* ============================================
+   SCENE ILLUSTRATION — Cinematic Overlay
+   ============================================ */
+
+.scene-illustration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 15;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.scene-illustration.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.scene-illustration.hidden {
+    display: none !important;
+}
+
+#scene-illustration-img {
+    max-width: 85%;
+    max-height: 75%;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow:
+        0 16px 64px rgba(0, 0, 0, 0.7),
+        0 4px 16px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.06);
+    border: 2px solid rgba(212, 175, 55, 0.2);
+}
+
+.scene-illustration-fade {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at center, transparent 40%, rgba(10, 10, 14, 0.85) 100%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Adjust reader-content to accommodate bottom controls */
+.has-audiobook {
+    height: calc(100vh - 280px - 80px) !important;
+}
+
+/* ============================================
+   READER SPLIT LAYOUT — Immersive Mode
+   ============================================ */
+
+.app-container.immersive-mode .sidebar {
+    display: none;
+}
+
+.app-container.immersive-mode .main-content {
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.app-container.immersive-mode .reader-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Immersive mode active — widen the gap */
+.reader-split.immersive-active {
+    gap: 0;
+}
+
+/* ============================================
+   SPEED SELECT — Matches Control Bar Theme
+   ============================================ */
+
+.ab-speed-select {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    outline: none;
+    min-width: 56px;
+    text-align: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.ab-speed-select:hover {
+    border-color: rgba(212, 175, 55, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.ab-speed-select option {
+    background: var(--bg-panel);
+    color: var(--text-primary);
+}
+
+/* Immersive Mode Toggle */
+.ab-immersive-btn {
+    font-size: 1rem !important;
+    position: relative;
+}
+
+.ab-immersive-btn.active {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(212, 175, 55, 0.1)) !important;
+    border-color: rgba(212, 175, 55, 0.35) !important;
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.2);
+}
+

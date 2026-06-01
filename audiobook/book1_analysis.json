@@ -1,0 +1,312 @@
+{
+  "chapter": "BOOK I",
+  "title": "THE GODS IN COUNCIL — MINERVA'S VISIT TO ITHACA",
+  "paragraphs": [
+    {
+      "index": 0,
+      "speaker": "narrator",
+      "voice": "am_michael",
+      "mood": "dramatic",
+      "speed": 0.95,
+      "ambience": "ocean",
+      "illustration": {
+        "prompt": "A cinematic concept art illustration of an ancient Greek ship sailing across a vast dark Mediterranean sea under dramatic storm clouds. God rays pierce through the clouds illuminating the lone vessel. Epic scale, hyper-detailed ocean waves, teal and orange color grading, volumetric lighting, AAA game key art style.",
+        "filename": "book_01_scene_01.png"
+      }
+    },
+    {
+      "index": 1,
+      "speaker": "narrator",
+      "voice": "am_michael",
+      "mood": "calm",
+      "speed": 1.0,
+      "ambience": "ocean",
+      "illustration": null
+    },
+    {
+      "index": 2,
+      "speaker": "narrator",
+      "voice": "am_michael",
+      "mood": "calm",
+      "speed": 1.0,
+      "ambience": "palace",
+      "illustration": null
+    },
+    {
+      "index": 3,
+      "speaker": "zeus",
+      "voice": "bm_george",
+      "mood": "commanding",
+      "speed": 0.95,
+      "ambience": "palace",
+      "illustration": {
+        "prompt": "A cinematic concept art illustration of the grand hall of Mount Olympus. Zeus sits on a massive golden throne addressing the assembled gods. Marble columns stretch impossibly high, ethereal light floods through openings in the clouds. Dramatic volumetric lighting, god rays, epic scale, hyper-detailed, teal and gold color grading, AAA blockbuster film key art.",
+        "filename": "book_01_scene_02.png"
+      }
+    },
+    {
+      "index": 4,
+      "speaker": "athena",
+      "voice": "bf_emma",
+      "mood": "passionate",
+      "speed": 1.0,
+      "ambience": "palace",
+      "illustration": null
+    },
+    {
+      "index": 5,
+      "speaker": "zeus",
+      "voice": "bm_george",
+      "mood": "thoughtful",
+      "speed": 0.95,
+      "ambience": "palace",
+      "illustration": null
+    },
+    {
+      "index": 6,
+      "speaker": "athena",
+      "voice": "bf_emma",
+      "mood": "determined",
+      "speed": 1.0,
+      "ambience": "palace",
+      "illustration": null
+    },
+    {
+      "index": 7,
+      "speaker": "narrator",
+      "voice": "am_michael",
+      "mood": "dramatic",
+      "speed": 1.0,
+      "ambience": "palace",
+      "illustration": {
+        "prompt": "A cinematic concept art illustration of the goddess Athena descending from Mount Olympus in golden sandals, bronze spear in hand, diving through dramatic clouds toward the island of Ithaca visible far below. Volumetric lighting, god rays piercing storm clouds, epic scale, hyper-detailed, teal and orange color grading, AAA game key art style.",
+        "filename": "book_01_scene_03.png"
+      }
+    },
+    {
+      "index": 8,
+      "speaker": "narrator",
+      "voice": "am_michael",
+      "mood": "melancholy",
+      "speed": 1.0,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 9,
+      "speaker": "narrator",
+      "voice": "am_michael",
+      "mood": "calm",
+      "speed": 1.0,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 10,
+      "speaker": "narrator",
+      "voice": "am_michael",
+      "mood": "calm",
+      "speed": 1.0,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 11,
+      "speaker": "narrator",
+      "voice": "am_michael",
+      "mood": "calm",
+      "speed": 1.0,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 12,
+      "speaker": "telemachus",
+      "voice": "am_adam",
+      "mood": "sorrowful",
+      "speed": 0.95,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 13,
+      "speaker": "athena",
+      "voice": "bf_emma",
+      "mood": "warm",
+      "speed": 1.0,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 14,
+      "speaker": "telemachus",
+      "voice": "am_adam",
+      "mood": "sorrowful",
+      "speed": 0.95,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 15,
+      "speaker": "athena",
+      "voice": "bf_emma",
+      "mood": "curious",
+      "speed": 1.0,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 16,
+      "speaker": "telemachus",
+      "voice": "am_adam",
+      "mood": "anguished",
+      "speed": 0.9,
+      "ambience": "feast_hall",
+      "illustration": {
+        "prompt": "A cinematic concept art illustration of a young Greek man (Telemachus) sitting at a feast table in a grand ancient hall, looking anguished and isolated while rowdy suitors feast and drink around him. Firelight flickers across marble columns. Moody atmosphere, dramatic chiaroscuro lighting, hyper-detailed, warm tones contrasting with cold shadows, AAA game key art style.",
+        "filename": "book_01_scene_04.png"
+      }
+    },
+    {
+      "index": 17,
+      "speaker": "athena",
+      "voice": "bf_emma",
+      "mood": "commanding",
+      "speed": 1.0,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 18,
+      "speaker": "athena",
+      "voice": "bf_emma",
+      "mood": "urgent",
+      "speed": 1.05,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 19,
+      "speaker": "telemachus",
+      "voice": "am_adam",
+      "mood": "grateful",
+      "speed": 1.0,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 20,
+      "speaker": "athena",
+      "voice": "bf_emma",
+      "mood": "calm",
+      "speed": 1.0,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 21,
+      "speaker": "narrator",
+      "voice": "am_michael",
+      "mood": "mystical",
+      "speed": 0.95,
+      "ambience": "feast_hall",
+      "illustration": {
+        "prompt": "A cinematic concept art illustration of a divine figure transforming into a bird and flying upward from the courtyard of an ancient Greek palace into a dramatic twilight sky. Ethereal golden light trails behind the figure. Other people below look up in awe. Volumetric lighting, hyper-detailed, epic scale, magical atmosphere, AAA blockbuster film key art.",
+        "filename": "book_01_scene_05.png"
+      }
+    },
+    {
+      "index": 22,
+      "speaker": "narrator",
+      "voice": "am_michael",
+      "mood": "sorrowful",
+      "speed": 0.95,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 23,
+      "speaker": "penelope",
+      "voice": "af_bella",
+      "mood": "sorrowful",
+      "speed": 0.9,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 24,
+      "speaker": "telemachus",
+      "voice": "am_adam",
+      "mood": "assertive",
+      "speed": 1.0,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 25,
+      "speaker": "narrator",
+      "voice": "am_michael",
+      "mood": "calm",
+      "speed": 1.0,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 26,
+      "speaker": "telemachus",
+      "voice": "am_adam",
+      "mood": "defiant",
+      "speed": 1.05,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 27,
+      "speaker": "antinous",
+      "voice": "am_echo",
+      "mood": "mocking",
+      "speed": 1.05,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 28,
+      "speaker": "telemachus",
+      "voice": "am_adam",
+      "mood": "defiant",
+      "speed": 1.0,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 29,
+      "speaker": "eurymachus",
+      "voice": "am_echo",
+      "mood": "diplomatic",
+      "speed": 1.0,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 30,
+      "speaker": "telemachus",
+      "voice": "am_adam",
+      "mood": "calm",
+      "speed": 1.0,
+      "ambience": "feast_hall",
+      "illustration": null
+    },
+    {
+      "index": 31,
+      "speaker": "narrator",
+      "voice": "am_michael",
+      "mood": "quiet",
+      "speed": 0.95,
+      "ambience": "island",
+      "illustration": {
+        "prompt": "A cinematic concept art illustration of a young Greek man (Telemachus) climbing stone stairs in a tower at night, led by an old woman carrying two blazing torches. The warm torchlight casts dramatic shadows on ancient stone walls. Stars visible through a window. Intimate, moody atmosphere, hyper-detailed, warm amber vs cool blue night tones, AAA game key art style.",
+        "filename": "book_01_scene_06.png"
+      }
+    }
+  ]
+}
