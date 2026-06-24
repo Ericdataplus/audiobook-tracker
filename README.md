@@ -1,5 +1,9 @@
 # 🎧 Audiobook Tracker
 
+### ▶️ [**Live site → ericdataplus.github.io/audiobook-tracker**](https://ericdataplus.github.io/audiobook-tracker/)
+
+*Runs entirely in your browser — no install, no account.*
+
 A browser-based library for tracking listens, taking notes, and reading the classics — built around a curated canon of ancient Greek and Roman philosophy and literature.
 
 ## Overview
